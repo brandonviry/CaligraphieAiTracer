@@ -1,0 +1,51 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CaligraphieAiTracer — Configuration
+# Ce fichier est lu au démarrage. Modifiez-le sans recompiler l'application.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[canvas]
+# Taille du canvas de dessin en pixels
+width  = 900
+height = 600
+# Hauteur cible des glyphes en pixels
+glyph_scale = 220.0
+
+[server]
+# Serveur TCP local pour piloter l'app depuis un script externe
+port    = 7777
+enabled = true
+
+[defaults]
+# Valeurs par défaut au démarrage
+font      = "Dancing Script"
+brush     = "brush_pen"
+color     = [10, 10, 30]
+thickness = 18.0
+speed     = 4.0
+
+[fonts]
+# ── Polices Google Fonts disponibles dans le sélecteur ──
+# Ajoutez n'importe quel nom exact de police Google Fonts.
+# Le fichier TTF sera téléchargé automatiquement au premier usage
+# et mis en cache dans le dossier défini par cache_dir.
+list = [
+  "Dancing Script",
+  "Great Vibes",
+  "Pacifico",
+  "Sacramento",
+  "Caveat",
+  "Pinyon Script",
+  "Alex Brush",
+  "Allura",
+]
+# Dossier de cache des fichiers TTF (relatif à l'emplacement du .exe)
+cache_dir = "assets/fonts"
+
+[brushes]
+# ── Brosses PNG personnalisées ──
+# Déposez vos fichiers PNG dans assets/brushes/ et listez-les ici.
+# Format attendu : PNG en niveaux de gris, 64×64 px recommandé.
+# Blanc = encre pleine, noir = transparent.
+# Exemple :
+# custom = ["assets/brushes/ma_brosse.png", "assets/brushes/calame.png"]
+custom = []

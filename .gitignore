@@ -1,0 +1,13 @@
+# ── Rust ──────────────────────────────────────────────────────────────────────
+/target/
+
+# ── Fichiers de cache/runtime (non committés) ─────────────────────────────────
+assets/fonts/
+dist/
+
+# ── Fichiers locaux non destinés au dépôt ────────────────────────────────────
+idéé.xml
+analyse/
+
+# ── Optionnel : exclure la config locale si tu veux la personnaliser par machine
+# config.toml
