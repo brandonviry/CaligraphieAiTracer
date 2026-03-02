@@ -158,7 +158,7 @@ Cargo.toml, src/main.rs, .gitignore. Fenêtre eframe vide.
   - Contenu : exe renommé, config.toml, README.md, send_job.py, polices TTF cachées, brosses PNG
   - Entièrement reproductible : recrée le dossier depuis zéro à chaque appel
 
-### 🔲 ÉTAPE 10 — Git & Publication
+### ✅ ÉTAPE 10 — Git & Publication
 - Repo : `https://github.com/brandonviry/CaligraphieAiTracer.git`
 - `.gitignore` : exclut `target/`, `assets/fonts/`, `dist/`, `analyse/`, `idéé.xml`
 - `Cargo.lock` commité (binaire → reproductibilité garantie)
