@@ -1,0 +1,93 @@
+name: CD
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    name: Release
+    runs-on: windows-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: cargo test
+        run: cargo test --all
+
+      - name: Package (dist)
+        run: powershell -ExecutionPolicy Bypass -File scripts/package.ps1 -SkipTests
+
+      - name: Get version
+        id: version
+        shell: bash
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create ZIP archive
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.version.outputs.tag }}"
+          $version = $tag.TrimStart("v")
+          $src = "dist\CaligraphieAiTracer-$version"
+          $zip = "dist\CaligraphieAiTracer-$version.zip"
+          if (-not (Test-Path $zip)) {
+            Compress-Archive -Path "$src\*" -DestinationPath $zip -CompressionLevel Optimal
+          }
+          echo "ZIP_PATH=$zip" >> $env:GITHUB_ENV
+          echo "ZIP_NAME=CaligraphieAiTracer-$version.zip" >> $env:GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "CaligraphieAiTracer ${{ steps.version.outputs.tag }}"
+          body: |
+            ## CaligraphieAiTracer ${{ steps.version.outputs.tag }}
+
+            Application Rust qui simule un calligraphe en train d'ecrire automatiquement.
+            Choisissez le texte, la police, la brosse et la couleur — l'app trace lettre par lettre
+            avec pression et inclinaison simulees.
+
+            ### Fonctionnalites
+            - Tracage automatique lettre par lettre (aucun dessin manuel)
+            - 4 types de brosses : `round_smooth`, `flat_calligraphy`, `brush_pen`, `dry_ink`
+            - 8 polices Google Fonts telechargeables automatiquement
+            - File d'attente de jobs (ajouter, reordonner, modifier, supprimer)
+            - Controle externe via TCP JSON sur `localhost:7777`
+            - Export / Replay du trace en JSON
+            - Configuration via `config.toml` (sans recompiler)
+
+            ### Installation
+            1. Telecharger `CaligraphieAiTracer-${{ steps.version.outputs.tag }}.zip`
+            2. Extraire le dossier
+            3. Lancer `CaligraphieAiTracer.exe`
+
+            Les polices se telechargent automatiquement au premier usage.
+
+            ### Controle via script
+            ```bash
+            python scripts/send_job.py "Bonjour" "Dancing Script"
+            python scripts/send_job.py --demo
+            ```
+          files: ${{ env.ZIP_PATH }}
+          draft: false
+          prerelease: false
